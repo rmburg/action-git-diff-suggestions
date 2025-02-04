@@ -9,10 +9,12 @@ jest.mock('@app/deleteOldReviewComments', () => ({
 
 jest.mock('@actions/github', () => ({
   getOctokit: () => ({
-    pulls: {
-      listReviewComments: jest.fn(),
-      deleteReviewComment: jest.fn(),
-      createReviewComment: jest.fn(),
+    rest: {
+      pulls: {
+        listReviewComments: jest.fn(),
+        deleteReviewComment: jest.fn(),
+        createReviewComment: jest.fn(),
+      },
     },
   }),
 }));
@@ -30,7 +32,7 @@ test('createReviewCommentsFromPatch does nothing with invalid git diff', async f
     commitId: '123',
   });
 
-  expect(octokit.pulls.listReviewComments).not.toHaveBeenCalled();
+  expect(octokit.rest.pulls.listReviewComments).not.toHaveBeenCalled();
 });
 
 test('createReviewCommentsFromPatch works', async function () {
@@ -64,8 +66,8 @@ index 5d7caa2267..bc109f7943 100644
   });
 
   expect(deleteOldReviewComments).toHaveBeenCalled();
-  expect(octokit.pulls.createReviewComment).toHaveBeenCalledTimes(1);
-  expect(octokit.pulls.createReviewComment).toHaveBeenCalledWith({
+  expect(octokit.rest.pulls.createReviewComment).toHaveBeenCalledTimes(1);
+  expect(octokit.rest.pulls.createReviewComment).toHaveBeenCalledWith({
     body: `Magic:
 
 \`\`\`suggestion

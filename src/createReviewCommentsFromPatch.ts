@@ -48,7 +48,7 @@ export async function createReviewCommentsFromPatch({
   // GitHub about having multiple pending review requests
   for (const patch of patches) {
     try {
-      await octokit.pulls.createReviewComment({
+      await octokit.rest.pulls.createReviewComment({
         owner,
         repo,
         pull_number: pullRequest,
@@ -72,7 +72,7 @@ ${patch.added.lines.join('\n')}
         },
       });
     } catch (err) {
-      core.error(err);
+      core.error(err as Error);
       throw err;
     }
   }

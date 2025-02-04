@@ -40,7 +40,7 @@ async function run(): Promise<void> {
       },
     });
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed((error as Error).message);
   }
 
   if (gitDiffError) {
@@ -59,7 +59,7 @@ async function run(): Promise<void> {
       commitId: GITHUB_EVENT.pull_request?.head.sha,
     });
   } catch (err) {
-    core.setFailed(err);
+    core.setFailed(err as Error);
   }
 
   // If we have a git diff, then it means that some linter/formatter has changed some files, so

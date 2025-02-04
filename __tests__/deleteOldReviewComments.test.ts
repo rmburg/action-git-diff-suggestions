@@ -4,9 +4,11 @@ import {deleteOldReviewComments} from '@app/deleteOldReviewComments';
 
 jest.mock('@actions/github', () => ({
   getOctokit: () => ({
-    pulls: {
-      listReviewComments: jest.fn(),
-      deleteReviewComment: jest.fn(),
+    rest: {
+      pulls: {
+        listReviewComments: jest.fn(),
+        deleteReviewComment: jest.fn(),
+      },
     },
   }),
 }));
@@ -14,7 +16,7 @@ jest.mock('@actions/github', () => ({
 test('deleteOldReviewComments works', async function () {
   const octokit = github.getOctokit('token');
 
-  ((octokit.pulls
+  ((octokit.rest.pulls
     .listReviewComments as unknown) as jest.Mock).mockImplementation(() => ({
     data: [
       {
@@ -123,9 +125,9 @@ test('deleteOldReviewComments works', async function () {
     pullRequest: 1337,
   });
 
-  expect(octokit.pulls.listReviewComments).toHaveBeenCalledTimes(1);
-  expect(octokit.pulls.deleteReviewComment).toHaveBeenCalledTimes(1);
-  expect(octokit.pulls.deleteReviewComment).toHaveBeenCalledWith({
+  expect(octokit.rest.pulls.listReviewComments).toHaveBeenCalledTimes(1);
+  expect(octokit.rest.pulls.deleteReviewComment).toHaveBeenCalledTimes(1);
+  expect(octokit.rest.pulls.deleteReviewComment).toHaveBeenCalledWith({
     owner: 'getsentry',
     repo: 'sentry',
     comment_id: 529164440,

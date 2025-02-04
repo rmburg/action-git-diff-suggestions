@@ -18,7 +18,7 @@ export async function deleteOldReviewComments({
   pullRequest,
 }: Params) {
   // Delete existing review comments from this bot
-  const existingReviews = await octokit.pulls.listReviewComments({
+  const existingReviews = await octokit.rest.pulls.listReviewComments({
     owner,
     repo,
     pull_number: pullRequest,
@@ -32,7 +32,7 @@ export async function deleteOldReviewComments({
           review.body.includes(commentBody)
       )
       .map(async review =>
-        octokit.pulls.deleteReviewComment({
+        octokit.rest.pulls.deleteReviewComment({
           owner,
           repo,
           comment_id: review.id,
