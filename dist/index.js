@@ -60,21 +60,19 @@ function createReviewCommentsFromPatch({ octokit, owner, repo, commentBody, gitD
             commentBody,
             pullRequest,
         });
-        // Need to call these APIs serially, otherwise face API errors from
-        // GitHub about having multiple pending review requests
-        for (const patch of patches) {
-            try {
-                yield octokit.rest.pulls.createReviewComment({
-                    owner,
-                    repo,
-                    pull_number: pullRequest,
-                    body: `${commentBody}:
-
-\`\`\`suggestion
+        try {
+            yield octokit.rest.pulls.createReview({
+                owner,
+                repo,
+                pull_number: pullRequest,
+                body: commentBody,
+                commit_id: commitId,
+                event: 'COMMENT',
+                comments: patches.map(patch => ({
+                    body: `\`\`\`suggestion
 ${patch.added.lines.join('\n')}
 \`\`\`
 `,
-                    commit_id: commitId,
                     path: patch.removed.file,
                     side: 'RIGHT',
                     start_side: 'RIGHT',
@@ -82,15 +80,15 @@ ${patch.added.lines.join('\n')}
                         ? patch.removed.start
                         : undefined,
                     line: patch.removed.end,
-                    mediaType: {
-                        previews: ['comfort-fade'],
-                    },
-                });
-            }
-            catch (err) {
-                core.error(err);
-                throw err;
-            }
+                })),
+                mediaType: {
+                    previews: ['comfort-fade'],
+                },
+            });
+        }
+        catch (err) {
+            core.error(err);
+            throw err;
         }
     });
 }

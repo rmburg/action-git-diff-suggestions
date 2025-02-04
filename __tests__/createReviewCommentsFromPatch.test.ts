@@ -13,7 +13,7 @@ jest.mock('@actions/github', () => ({
       pulls: {
         listReviewComments: jest.fn(),
         deleteReviewComment: jest.fn(),
-        createReviewComment: jest.fn(),
+        createReview: jest.fn(),
       },
     },
   }),
@@ -66,11 +66,20 @@ index 5d7caa2267..bc109f7943 100644
   });
 
   expect(deleteOldReviewComments).toHaveBeenCalled();
-  expect(octokit.rest.pulls.createReviewComment).toHaveBeenCalledTimes(1);
-  expect(octokit.rest.pulls.createReviewComment).toHaveBeenCalledWith({
-    body: `Magic:
-
-\`\`\`suggestion
+  expect(octokit.rest.pulls.createReview).toHaveBeenCalledTimes(1);
+  expect(octokit.rest.pulls.createReview).toHaveBeenCalledWith({
+    body: 'Magic',
+    commit_id: '123',
+    mediaType: {
+      previews: ['comfort-fade'],
+    },
+    owner: 'getsentry',
+    pull_number: 1337,
+    repo: 'sentry',
+    event: 'COMMENT',
+    comments: [
+      {
+        body: `\`\`\`suggestion
   if (
     eventTypes.includes(EventTypes.DEFAULT
                          ) && eventTypes.includes(
@@ -80,17 +89,12 @@ index 5d7caa2267..bc109f7943 100644
     {
 \`\`\`
 `,
-    commit_id: '123',
-    line: 200,
-    mediaType: {
-      previews: ['comfort-fade'],
-    },
-    owner: 'getsentry',
-    path: 'src/sentry/static/sentry/app/views/alerts/utils/index.tsx',
-    pull_number: 1337,
-    repo: 'sentry',
-    side: 'RIGHT',
-    start_line: 195,
-    start_side: 'RIGHT',
+        line: 200,
+        path: 'src/sentry/static/sentry/app/views/alerts/utils/index.tsx',
+        side: 'RIGHT',
+        start_line: 195,
+        start_side: 'RIGHT',
+      },
+    ],
   });
 });
